@@ -28,22 +28,21 @@ fn main() {
         return;
     }
 
+    let input: String;
     if !matches.free.is_empty() {
         if matches.free.len() > 1 {
             print_help(&program, opts);
             return
         }
-        println!("{}", matches.free[0].clone());
+        input = matches.free[0].clone();
     } else {
         print_help(&program, opts);
         return
     };
-    /*
+
     println!(".intel_syntax noprefix");
-    println!("global main");
+    println!(".globl main");
     println!("main:");
-    println!("   mov rax, {}", atoi(argv[1])
-
-*/
-
+    println!("  mov rax, {}", input.parse::<i32>().unwrap());
+    println!("  ret");
 }
