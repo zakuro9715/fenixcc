@@ -11,6 +11,6 @@ if [ "$expected" = "$actual" ]
 then
   echo "OK"
 else
-  echo Expected $expected, actual $actual
+  echo ERROR: expected $expected, actual $actual
   exit 1
 fi
