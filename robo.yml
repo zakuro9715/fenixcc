@@ -1,0 +1,22 @@
+setup:
+  exec: rustup component add rustfmt
+
+build:
+  exec: cargo build
+
+run:
+  exec: cargo run --
+
+clean:
+  exec: cargo clean
+
+rust-test:
+  exec: cargo test
+
+shell-test:
+  script: ./shell-tests/run
+
+test:
+  command: |
+    robo -c {{ .robo.file }} rust-test $@
+    robo -c {{ .robo.file }} shell-test $@
