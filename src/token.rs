@@ -7,7 +7,7 @@ pub enum Symbol {
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum TokenKind {
     Symbol(Symbol),
-    Int(u64),
+    Int(i64),
     EOF,
 }
 
@@ -30,13 +30,15 @@ impl Pos {
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Token {
+    pub text: String,
     pub kind: TokenKind,
     pub pos: Pos
 }
 
 impl Token {
-    pub fn new(kind: TokenKind, pos: Pos) -> Token {
+    pub fn new(text: String, kind: TokenKind, pos: Pos) -> Token {
         Token {
+            text: text,
             kind: kind,
             pos: pos,
         }
