@@ -1,11 +1,16 @@
 setup:
-  exec: rustup component add rustfmt
+  command: |
+    rustup component add rustfmt
+    rustup component add clippy
 
 build:
   exec: cargo build
 
 run:
   exec: cargo run --
+
+lint:
+  exec: cargo clippy
 
 clean:
   exec: cargo clean

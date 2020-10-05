@@ -21,5 +21,7 @@ jobs:
       run: bash scripts/get_robo.bash && sudo mv robo /usr/local/bin/
     - name: Build
       run: robo build --verbose
+    - name: Lint
+      run: robo lint
     - name: Test
       run: robo test  --verbose
