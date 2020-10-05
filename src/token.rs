@@ -21,11 +21,19 @@ pub struct Pos {
 
 impl Pos {
     pub fn head() -> Pos {
-        Pos { offset: 0, line: 1, col: 1 }
+        Pos {
+            offset: 0,
+            line: 1,
+            col: 1,
+        }
     }
 
-    pub fn new(offset: usize, line: usize, col: usize) -> Pos{
-        Pos { offset: offset, line: line, col: col }
+    pub fn new(offset: usize, line: usize, col: usize) -> Pos {
+        Pos {
+            offset: offset,
+            line: line,
+            col: col,
+        }
     }
 }
 
@@ -33,7 +41,7 @@ impl Pos {
 pub struct Token {
     pub text: String,
     pub kind: TokenKind,
-    pub pos: Pos
+    pub pos: Pos,
 }
 
 impl Token {

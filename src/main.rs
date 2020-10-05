@@ -32,12 +32,12 @@ fn main() {
     if !matches.free.is_empty() {
         if matches.free.len() > 1 {
             print_help(&program, opts);
-            return
+            return;
         }
         input = matches.free[0].clone();
     } else {
         print_help(&program, opts);
-        return
+        return;
     };
 
     println!(".intel_syntax noprefix");
