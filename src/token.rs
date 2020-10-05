@@ -12,6 +12,23 @@ pub enum TokenKind {
     EOF,
 }
 
+impl TokenKind {
+    pub fn is_literal(&self) -> bool {
+        match self {
+            TokenKind::Int(_) => true,
+            _ => false,
+        }
+    }
+}
+
+#[test]
+fn test_token_kind_is_literal() {
+    assert!(!TokenKind::Error.is_literal());
+    assert!(!TokenKind::Symbol(Symbol::Plus).is_literal());
+    assert!(TokenKind::Int(0).is_literal());
+    assert!(!TokenKind::EOF.is_literal());
+}
+
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct Pos {
     pub offset: usize,
