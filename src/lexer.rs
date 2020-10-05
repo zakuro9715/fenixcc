@@ -45,7 +45,7 @@ impl Lexer {
             self.consume()
         }
         let text: String = self.source[start_pos.offset..self.pos.offset]
-            .into_iter()
+            .iter()
             .collect();
         let int = text.parse::<i64>().unwrap();
         Token::new(format!("{}", text), TokenKind::Int(int), start_pos)
@@ -84,7 +84,7 @@ impl Iterator for Lexer {
 
     fn next(&mut self) -> Option<Token> {
         self.skip_whitespace();
-        return if self.eof() {
+        if self.eof() {
             if self.terminated {
                 None
             } else {
@@ -92,7 +92,7 @@ impl Iterator for Lexer {
             }
         } else {
             Some(self.tokenize())
-        };
+        }
     }
 }
 

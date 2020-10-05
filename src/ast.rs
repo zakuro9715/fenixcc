@@ -1,4 +1,6 @@
-use crate::token::{Token, TokenKind, Pos};
+use crate::token::Token;
+#[cfg(test)] use crate::token::{TokenKind, Pos};
+
 
 #[derive(Debug, Clone)]
 pub struct AST {
@@ -34,4 +36,3 @@ fn test_new_literal() {
 fn test_new_literal_invalid() {
     AST::new_literal(Token::new("".to_string(), TokenKind::EOF, Pos::head()));
 }
-
