@@ -17,12 +17,12 @@ pub enum Node {
 
 impl AST {
     pub fn new(token: Token, node: Node) -> Box<AST> {
-        Box::new(AST { token, node })
+        Box::new(Self { token, node })
     }
 
     pub fn new_literal(token: Token) -> Box<AST> {
         debug_assert!(token.kind.is_literal());
-        Box::new(AST { token, node: Node::Literal })
+        Box::new(Self { token, node: Node::Literal })
     }
 }
 

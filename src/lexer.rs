@@ -11,7 +11,7 @@ pub struct Lexer {
 
 impl Lexer {
     pub fn new(source: String) -> Lexer {
-        Lexer {
+        Self {
             pos: Pos::head(),
             source: source.chars().collect(),
             terminated: false,
