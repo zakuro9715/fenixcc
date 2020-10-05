@@ -6,6 +6,7 @@ pub enum Symbol {
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum TokenKind {
+    Error,
     Symbol(Symbol),
     Int(i64),
     EOF,
