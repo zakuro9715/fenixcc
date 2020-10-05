@@ -50,6 +50,14 @@ impl Pos {
     }
 }
 
+#[test]
+fn test_pos_new() {
+    let pos = Pos::new(1, 2, 3);
+    assert_eq!(pos.offset, 1);
+    assert_eq!(pos.line, 2);
+    assert_eq!(pos.col, 3);
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub struct Token {
     pub text: String,
@@ -61,4 +69,12 @@ impl Token {
     pub fn new(text: String, kind: TokenKind, pos: Pos) -> Token {
         Token { text, kind, pos }
     }
+}
+
+#[test]
+fn test_token_new() {
+    let tok = Token::new("1".to_string(), TokenKind::Int(1), Pos::head());
+    assert_eq!(tok.text, "1".to_string());
+    assert_eq!(tok.kind, TokenKind::Int(1));
+    assert_eq!(tok.pos, Pos::head());
 }
