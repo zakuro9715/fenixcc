@@ -46,11 +46,7 @@ impl Pos {
     }
 
     pub fn new(offset: usize, line: usize, col: usize) -> Pos {
-        Pos {
-            offset: offset,
-            line: line,
-            col: col,
-        }
+        Pos { offset, line, col }
     }
 }
 
@@ -63,10 +59,6 @@ pub struct Token {
 
 impl Token {
     pub fn new(text: String, kind: TokenKind, pos: Pos) -> Token {
-        Token {
-            text: text,
-            kind: kind,
-            pos: pos,
-        }
+        Token { text, kind, pos }
     }
 }
