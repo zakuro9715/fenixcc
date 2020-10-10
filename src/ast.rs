@@ -16,23 +16,23 @@ pub enum Node {
 }
 
 impl AST {
-    pub fn new(token: Token, node: Node) -> Box<AST> {
-        Box::new(Self { token, node })
+    pub fn new(token: Token, node: Node) -> Self {
+        Self { token, node }
     }
 
-    pub fn new_literal(token: Token) -> Box<AST> {
+    pub fn new_literal(token: Token) -> AST {
         debug_assert!(token.kind.is_literal());
-        Box::new(Self { token, node: Node::Literal })
+        Self { token, node: Node::Literal }
     }
 }
 
 #[test]
 fn test_new_literal() {
-    AST::new_literal(Token::new("0".to_string(), TokenKind::Int(0), Pos::head()));
+    AST::new_literal(Token::new(TokenKind::Int(0), Pos::head()));
 }
 
 #[test]
 #[should_panic]
 fn test_new_literal_invalid() {
-    AST::new_literal(Token::new("".to_string(), TokenKind::EOF, Pos::head()));
+    AST::new_literal(Token::new(TokenKind::EOF, Pos::head()));
 }

@@ -1,10 +1,10 @@
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub enum Symbol {
     Plus,
     Minus,
 }
 
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub enum TokenKind {
     Error,
     Symbol(Symbol),
@@ -29,7 +29,7 @@ fn test_token_kind_is_literal() {
     assert!(!TokenKind::EOF.is_literal());
 }
 
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub struct Pos {
     pub offset: usize,
     pub line: usize,
@@ -60,21 +60,19 @@ fn test_pos_new() {
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Token {
-    pub text: String,
     pub kind: TokenKind,
     pub pos: Pos,
 }
 
 impl Token {
-    pub fn new(text: String, kind: TokenKind, pos: Pos) -> Token {
-        Self { text, kind, pos }
+    pub fn new(kind: TokenKind, pos: Pos) -> Self {
+        Self { kind, pos }
     }
 }
 
 #[test]
 fn test_token_new() {
-    let tok = Token::new("1".to_string(), TokenKind::Int(1), Pos::head());
-    assert_eq!(tok.text, "1".to_string());
+    let tok = Token::new(TokenKind::Int(1), Pos::head());
     assert_eq!(tok.kind, TokenKind::Int(1));
     assert_eq!(tok.pos, Pos::head());
 }
