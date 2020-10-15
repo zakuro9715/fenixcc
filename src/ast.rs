@@ -1,6 +1,6 @@
 use crate::token::Token;
-#[cfg(test)] use crate::token::{TokenKind, Pos};
-
+#[cfg(test)]
+use crate::token::{Pos, TokenKind};
 
 #[derive(Debug, Clone)]
 pub struct AST {
@@ -22,7 +22,10 @@ impl AST {
 
     pub fn new_literal(token: Token) -> AST {
         debug_assert!(token.kind.is_literal());
-        Self { token, node: Node::Literal }
+        Self {
+            token,
+            node: Node::Literal,
+        }
     }
 }
 
