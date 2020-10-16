@@ -33,7 +33,7 @@ impl AST {
 }
 #[macro_export]
 macro_rules! ast {
-    ($method:ident $(,$args:expr)*) => (
+    ($method:ident, $($args:expr),* $(,)?) => (
         AST::$method($($args),*)
     );
 }

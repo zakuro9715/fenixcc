@@ -105,7 +105,7 @@ impl Token {
 
 #[macro_export]
 macro_rules! tok {
-    ($method:ident $(,$args:expr)*) => (
+    ($method:ident $(,$args:expr)* $(,)?) => (
         Token::$method($($args),*)
     );
 }
