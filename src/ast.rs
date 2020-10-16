@@ -10,14 +10,17 @@ pub struct AST {
 
 #[derive(Debug, Clone)]
 pub enum Node {
-    Addition(Box<AST>, Box<AST>),
-    Subtraction(Box<AST>, Box<AST>),
+    BinaryExpr(Box<AST>, Box<AST>),
     Literal,
 }
 
 impl AST {
     pub fn new(token: Token, node: Node) -> Self {
         Self { token, node }
+    }
+
+    pub fn new_binary_expr(lhs: AST, op: Token, rhs: AST) -> Self {
+        Self { token: op, node: Node::BinaryExpr(Box::new(lhs), Box::new(rhs)) }
     }
 
     pub fn new_literal(token: Token) -> AST {
@@ -27,6 +30,12 @@ impl AST {
             node: Node::Literal,
         }
     }
+}
+#[macro_export]
+macro_rules! ast {
+    ($method:ident $(,$args:expr)*) => (
+        AST::$method($($args),*)
+    );
 }
 
 #[test]
