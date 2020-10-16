@@ -110,6 +110,11 @@ macro_rules! tok {
     );
 }
 
+#[macro_export]
+macro_rules! sym {
+    ($sym:ident) => (TokenKind::Symbol(Symbol::$sym));
+}
+
 #[test]
 fn test_token_new() {
     let tok = Token::new(TokenKind::Int(1), Pos::head());
