@@ -1,6 +1,12 @@
 extern crate getopts;
+
 use getopts::Options;
 use std::env;
+use std::process::exit;
+use std::fs;
+
+use fenixcc::lexer::Lexer;
+use fenixcc::parser::Parser;
 
 fn print_help(program: &str, opts: Options) {
     let brief = format!("Usage: {} INPUT [options]", program);
@@ -25,24 +31,25 @@ fn main() {
 
     if matches.opt_present("h") {
         print_help(&program, opts);
-        return;
+        exit(0);
     }
 
     let input: String;
     if !matches.free.is_empty() {
         if matches.free.len() > 1 {
             print_help(&program, opts);
-            return;
+            exit(1);
         }
-        input = matches.free[0].clone();
+        input = fs::read_to_string(&matches.free[0]).unwrap();
     } else {
         print_help(&program, opts);
         return;
     };
 
-    println!(".intel_syntax noprefix");
-    println!(".globl main");
-    println!("main:");
-    println!("  mov rax, {}", input.parse::<i32>().unwrap());
-    println!("  ret");
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    match parser.parse() {
+        Ok(ast) => println!("{:#?}", ast),
+        Err(err) => println!("Error: {:#?}", err),
+    }
 }
