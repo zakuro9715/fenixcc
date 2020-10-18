@@ -39,14 +39,14 @@ fn test_token_kind_is_literal() {
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
-pub struct Pos {
+pub struct Loc {
     pub offset: usize,
     pub line: usize,
     pub col: usize,
 }
 
-impl Pos {
-    pub fn head() -> Pos {
+impl Loc {
+    pub fn head() -> Loc {
         Self {
             offset: 0,
             line: 1,
@@ -54,52 +54,52 @@ impl Pos {
         }
     }
 
-    pub fn new(offset: usize, line: usize, col: usize) -> Pos {
+    pub fn new(offset: usize, line: usize, col: usize) -> Loc {
         Self { offset, line, col }
     }
 }
 
 #[test]
-fn test_pos_new() {
-    let pos = Pos::new(1, 2, 3);
-    assert_eq!(pos.offset, 1);
-    assert_eq!(pos.line, 2);
-    assert_eq!(pos.col, 3);
+fn test_loc_new() {
+    let loc = Loc::new(1, 2, 3);
+    assert_eq!(loc.offset, 1);
+    assert_eq!(loc.line, 2);
+    assert_eq!(loc.col, 3);
 }
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Token {
     pub kind: TokenKind,
-    pub pos: Pos,
+    pub loc: Loc,
 }
 
 impl Token {
-    pub fn new(kind: TokenKind, pos: Pos) -> Self {
-        Self { kind, pos }
+    pub fn new(kind: TokenKind, loc: Loc) -> Self {
+        Self { kind, loc }
     }
 
-    pub fn new_symbol(sym: Symbol, pos: Pos) -> Self {
-        Self::new(TokenKind::Symbol(sym), pos)
+    pub fn new_symbol(sym: Symbol, loc: Loc) -> Self {
+        Self::new(TokenKind::Symbol(sym), loc)
     }
 
-    pub fn new_int(v: i64, pos: Pos) -> Self {
-        Self::new(TokenKind::Int(v), pos)
+    pub fn new_int(v: i64, loc: Loc) -> Self {
+        Self::new(TokenKind::Int(v), loc)
     }
 
-    pub fn new_error(err: TokenError, pos: Pos) -> Self {
-        Self::new(TokenKind::Error(err), pos)
+    pub fn new_error(err: TokenError, loc: Loc) -> Self {
+        Self::new(TokenKind::Error(err), loc)
     }
 
-    pub fn new_unexpected_char(expected: Option<char>, actual: Option<char>, pos: Pos) -> Self {
-        Self::new_error(TokenError::UnexpectedChar { expected, actual }, pos)
+    pub fn new_unexpected_char(expected: Option<char>, actual: Option<char>, loc: Loc) -> Self {
+        Self::new_error(TokenError::UnexpectedChar { expected, actual }, loc)
     }
 
-    pub fn new_invalid_char(c: char, pos: Pos) -> Self {
-        Self::new_unexpected_char(None, Some(c), pos)
+    pub fn new_invalid_char(c: char, loc: Loc) -> Self {
+        Self::new_unexpected_char(None, Some(c), loc)
     }
 
-    pub fn new_eof(pos: Pos) -> Self {
-        Self::new(TokenKind::EOF, pos)
+    pub fn new_eof(loc: Loc) -> Self {
+        Self::new(TokenKind::EOF, loc)
     }
 }
 
@@ -117,7 +117,7 @@ macro_rules! sym {
 
 #[test]
 fn test_token_new() {
-    let tok = Token::new(TokenKind::Int(1), Pos::head());
+    let tok = Token::new(TokenKind::Int(1), Loc::head());
     assert_eq!(tok.kind, TokenKind::Int(1));
-    assert_eq!(tok.pos, Pos::head());
+    assert_eq!(tok.loc, Loc::head());
 }

@@ -73,17 +73,17 @@ where
 #[cfg(test)]
 use crate::tok;
 #[cfg(test)]
-use crate::token::Pos;
+use crate::token::Loc;
 
 #[test]
 fn test_expr() {
     let tokens = vec![
-        tok!(new_int, 0, Pos::new(0, 1, 1)),
-        tok!(new_symbol, Symbol::Plus, Pos::new(1, 1, 2)),
-        tok!(new_int, 0, Pos::new(2, 1, 3)),
-        tok!(new_symbol, Symbol::Minus, Pos::new(3, 1, 4)),
-        tok!(new_int, 0, Pos::new(4, 1, 5)),
-        tok!(new_eof, Pos::new(4, 1, 6)),
+        tok!(new_int, 0, Loc::new(0, 1, 1)),
+        tok!(new_symbol, Symbol::Plus, Loc::new(1, 1, 2)),
+        tok!(new_int, 0, Loc::new(2, 1, 3)),
+        tok!(new_symbol, Symbol::Minus, Loc::new(3, 1, 4)),
+        tok!(new_int, 0, Loc::new(4, 1, 5)),
+        tok!(new_eof, Loc::new(4, 1, 6)),
     ];
     let v = Parser::new(tokens.clone().into_iter()).parse().unwrap();
     assert_eq!(

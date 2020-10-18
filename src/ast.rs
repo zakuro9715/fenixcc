@@ -1,6 +1,6 @@
 use crate::token::Token;
 #[cfg(test)]
-use crate::token::{Pos, TokenKind};
+use crate::token::{Loc, TokenKind};
 
 #[derive(Debug, Clone)]
 pub struct AST {
@@ -40,11 +40,11 @@ macro_rules! ast {
 
 #[test]
 fn test_new_literal() {
-    AST::new_literal(Token::new(TokenKind::Int(0), Pos::head()));
+    AST::new_literal(Token::new(TokenKind::Int(0), Loc::head()));
 }
 
 #[test]
 #[should_panic]
 fn test_new_literal_invalid() {
-    AST::new_literal(Token::new(TokenKind::EOF, Pos::head()));
+    AST::new_literal(Token::new(TokenKind::EOF, Loc::head()));
 }
