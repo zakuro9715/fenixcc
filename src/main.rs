@@ -7,6 +7,7 @@ use std::fs;
 
 use fenixcc::lexer::Lexer;
 use fenixcc::parser::Parser;
+use fenixcc::source::Source;
 
 fn print_help(program: &str, opts: Options) {
     let brief = format!("Usage: {} INPUT [options]", program);
@@ -34,19 +35,20 @@ fn main() {
         exit(0);
     }
 
-    let input: String;
-    if !matches.free.is_empty() {
+    let source = if !matches.free.is_empty() {
         if matches.free.len() > 1 {
             print_help(&program, opts);
             exit(1);
         }
-        input = fs::read_to_string(&matches.free[0]).unwrap();
+        let filename = matches.free[0].clone();
+        let code = fs::read_to_string(&filename).unwrap();
+        Source::new(filename, code)
     } else {
         print_help(&program, opts);
-        return;
+        exit(0);
     };
 
-    let lexer = Lexer::new(input);
+    let lexer = Lexer::new(&source);
     let mut parser = Parser::new(lexer);
     match parser.parse() {
         Ok(ast) => println!("{:#?}", ast),

@@ -1,28 +1,28 @@
 use crate::tok;
 use crate::token::{Loc, Symbol, Token, TokenKind};
+use crate::source::Source;
 use std::char;
 use std::iter::Iterator;
-use std::vec::Vec;
 
-pub struct Lexer {
+pub struct Lexer<'a> {
+    source: &'a Source,
     loc: Loc,
-    source: Vec<char>,
 }
 
-impl Lexer {
-    pub fn new(source: String) -> Lexer {
+impl<'a> Lexer <'a> {
+    pub fn new(source: &'a Source) -> Lexer {
         Self {
             loc: Loc::head(),
-            source: source.chars().collect(),
+            source,
         }
     }
 
     fn eof(&self) -> bool {
-        self.loc.offset >= self.source.len()
+        self.loc.offset >= self.source.code.len()
     }
 
     fn peek_char(&mut self) -> char {
-        if let Some(c) = self.source.get(self.loc.offset) {
+        if let Some(c) = self.source.code.get(self.loc.offset) {
             *c
         } else {
             char::REPLACEMENT_CHARACTER
@@ -38,7 +38,7 @@ impl Lexer {
         while !self.eof() && f(self.peek_char()) {
             self.consume()
         }
-        self.source[start_loc.offset..self.loc.offset]
+        self.source.code[start_loc.offset..self.loc.offset]
             .iter()
             .collect()
     }
@@ -79,7 +79,7 @@ impl Lexer {
     }
 }
 
-impl Iterator for Lexer {
+impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
         self.skip_whitespaces();
@@ -110,7 +110,8 @@ impl Iterator for Lexer {
 
 #[test]
 fn test_lexer() {
-    let mut lexer = Lexer::new("1 + 2 -\0  3\n0".to_string()).peekable();
+    let s = Source::new("".to_string(), "1 + 2 -\0  3\n0".to_string());
+    let mut lexer = Lexer::new(&s).peekable();
 
     let tokens = vec![
         tok!(new_int, 1, Loc::new(0, 1, 1)),
