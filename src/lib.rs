@@ -1,5 +1,7 @@
 pub mod ast;
 pub use ast::*;
+pub mod ir;
+pub use ir::*;
 pub mod lexer;
 pub use lexer::*;
 pub mod parser;
