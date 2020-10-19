@@ -11,7 +11,7 @@ pub struct AST {
 #[derive(Debug, Clone)]
 pub enum Node {
     BinaryExpr(Box<AST>, Box<AST>),
-    Literal,
+    IntLiteral(i64),
 }
 
 impl AST {
@@ -24,10 +24,14 @@ impl AST {
     }
 
     pub fn new_literal(token: Token) -> AST {
-        debug_assert!(token.kind.is_literal());
+        let kind = token.kind.clone();
         Self {
             token,
-            node: Node::Literal,
+            node: match kind {
+                TokenKind::Int(i) =>
+                    Node::IntLiteral(i),
+                _ => panic!("Invalid token")
+            }
         }
     }
 }
