@@ -1,7 +1,7 @@
 use crate::ast::AST;
-use crate::{sym, ast, Token, TokenKind};
 #[cfg(test)]
 use crate::Symbol;
+use crate::{ast, sym, Token, TokenKind};
 
 #[derive(Debug, Clone)]
 pub enum Error {
@@ -12,19 +12,15 @@ pub enum Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 use std::iter::{Iterator, Peekable};
-pub struct Parser<Tokens>
-where
-    Tokens: Iterator<Item = Token>
-{
+pub struct Parser<Tokens: Iterator<Item = Token>> {
     pub tokens: Peekable<Tokens>,
 }
 
-impl<Tokens> Parser<Tokens>
-where
-    Tokens: Iterator<Item = Token>
-{
+impl<Tokens: Iterator<Item = Token>> Parser<Tokens> {
     pub fn new(tokens: Tokens) -> Self {
-        Self { tokens: tokens.peekable() }
+        Self {
+            tokens: tokens.peekable(),
+        }
     }
 
     pub fn parse(&mut self) -> Result<AST> {
@@ -49,7 +45,7 @@ where
         Ok(ast)
     }
 
-    fn read_token_with_match<F: Fn(&Token) -> bool> (&mut self, matches: F) -> Result<Token> {
+    fn read_token_with_match<F: Fn(&Token) -> bool>(&mut self, matches: F) -> Result<Token> {
         let tok = self.next_token();
         match tok.kind {
             _ if matches(&tok) => Ok(tok),
@@ -89,14 +85,19 @@ fn test_expr() {
     let v = Parser::new(tokens.clone().into_iter()).parse().unwrap();
     assert_eq!(
         format!("{:?}", v),
-        format!("{:?}", ast!(new_binary_expr,
-            ast!(new_binary_expr,
-                ast!(new_literal, tokens[0].clone()),
-                tokens[1].clone(),
-                ast!(new_literal, tokens[2].clone()),
-            ),
-            tokens[3].clone(),
-            ast!(new_literal, tokens[4].clone()),
-        )),
+        format!(
+            "{:?}",
+            ast!(
+                new_binary_expr,
+                ast!(
+                    new_binary_expr,
+                    ast!(new_literal, tokens[0].clone()),
+                    tokens[1].clone(),
+                    ast!(new_literal, tokens[2].clone()),
+                ),
+                tokens[3].clone(),
+                ast!(new_literal, tokens[4].clone()),
+            )
+        ),
     );
 }

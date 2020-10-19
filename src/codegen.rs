@@ -1,9 +1,7 @@
-use std::iter::Iterator;
-use crate::sym;
-
+#[rustfmt::skip::macros(format)]
 pub mod x86_64 {
-    use crate::{IR, Instruction};
     use crate::Instruction::*;
+    use crate::{Instruction, IR};
 
     fn compile_binary_operation(op: &str) -> String {
         format!("\
@@ -24,7 +22,9 @@ pub mod x86_64 {
     }
 
     pub fn compile(ir: &IR) -> String {
-        let body = ir.iter().fold(String::new(), |s, inst| s + &compile_instruction(&inst));
+        let body = ir
+            .iter()
+            .fold(String::new(), |s, inst| s + &compile_instruction(&inst));
         format!("\
             .intel_syntax noprefix\n\
             .global main\n\
@@ -62,6 +62,6 @@ pub mod x86_64 {
         let s = compile_instruction(&SubI);
         assert_eq!(4, s.lines().count());
         assert!(s.contains("push"));
-        assert!(s.contains("sub"), );
+        assert!(s.contains("sub"));
     }
 }

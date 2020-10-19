@@ -1,4 +1,4 @@
-use crate::{tok, Loc, Symbol, Token, TokenKind, Source};
+use crate::{tok, Loc, Source, Symbol, Token, TokenKind};
 use std::char;
 use std::iter::Iterator;
 
@@ -7,7 +7,7 @@ pub struct Lexer<'a> {
     loc: Loc,
 }
 
-impl<'a> Lexer <'a> {
+impl<'a> Lexer<'a> {
     pub fn new(source: &'a Source) -> Lexer {
         Self {
             loc: Loc::head(),

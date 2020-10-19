@@ -3,7 +3,6 @@ extern crate getopts;
 use getopts::Options;
 use std::env;
 use std::process::exit;
-use std::fs;
 
 use fenixcc::compile;
 

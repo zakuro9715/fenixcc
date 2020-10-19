@@ -6,7 +6,10 @@ pub struct Source {
 
 impl Source {
     pub fn new(filename: String, code: String) -> Self {
-        Self { filename, code: code.chars().collect() }
+        Self {
+            filename,
+            code: code.chars().collect(),
+        }
     }
 }
 

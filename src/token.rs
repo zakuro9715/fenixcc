@@ -120,7 +120,9 @@ macro_rules! head_tok {
 
 #[macro_export]
 macro_rules! sym {
-    ($sym:ident) => ($crate::TokenKind::Symbol($crate::Symbol::$sym));
+    ($sym:ident) => {
+        $crate::TokenKind::Symbol($crate::Symbol::$sym)
+    };
 }
 
 #[test]

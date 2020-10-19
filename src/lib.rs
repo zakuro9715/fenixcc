@@ -13,7 +13,6 @@ pub use token::*;
 pub mod source;
 pub use source::*;
 
-
 pub fn compile(filename: String) -> parser::Result<String> {
     use std::fs;
     let code = fs::read_to_string(&filename).unwrap();
