@@ -5,7 +5,7 @@ use std::env;
 use std::process::exit;
 use std::fs;
 
-use fenixcc::{Lexer, Parser, Source};
+use fenixcc::compile;
 
 fn print_help(program: &str, opts: Options) {
     let brief = format!("Usage: {} INPUT [options]", program);
@@ -33,23 +33,19 @@ fn main() {
         exit(0);
     }
 
-    let source = if !matches.free.is_empty() {
+    let filename = if !matches.free.is_empty() {
         if matches.free.len() > 1 {
             print_help(&program, opts);
             exit(1);
         }
-        let filename = matches.free[0].clone();
-        let code = fs::read_to_string(&filename).unwrap();
-        Source::new(filename, code)
+        matches.free[0].clone()
     } else {
         print_help(&program, opts);
         exit(0);
     };
 
-    let lexer = Lexer::new(&source);
-    let mut parser = Parser::new(lexer);
-    match parser.parse() {
-        Ok(ast) => println!("{:#?}", ast),
+    match compile(filename) {
+        Ok(asm) => println!("{}", asm), // generate_code(&ast)),
         Err(err) => println!("Error: {:#?}", err),
     }
 }

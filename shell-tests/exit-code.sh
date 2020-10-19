@@ -1,11 +1,8 @@
-cargo run 42 > tmp.s
-cc tmp.s
+robo compile-example expr.c
 ./a.out
 
 actual="$?"
-expected=42
-
-rm tmp.s a.out
+expected=7
 
 if [ "$expected" = "$actual" ]
 then

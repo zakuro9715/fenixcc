@@ -9,6 +9,12 @@ build:
 run:
   exec: cargo run --
 
+compile-example:
+  command: |
+    mkdir -p ./tmp
+    cargo run "./examples/$1" > "./tmp/$1.s"
+    clang "./tmp/$1.s"
+
 lint:
   exec: cargo clippy
 
