@@ -1,11 +1,11 @@
-use crate::token::Token;
+use crate::{Token, TokenKind, sym};
 #[cfg(test)]
-use crate::token::{Loc, TokenKind};
+use crate::{tok, Loc};
 
 #[derive(Debug, Clone)]
 pub struct AST {
-    token: Token,
-    node: Node,
+    pub token: Token,
+    pub node: Node,
 }
 
 #[derive(Debug, Clone)]
@@ -34,7 +34,7 @@ impl AST {
 #[macro_export]
 macro_rules! ast {
     ($method:ident, $($args:expr),* $(,)?) => (
-        AST::$method($($args),*)
+        $crate::AST::$method($($args),*)
     );
 }
 

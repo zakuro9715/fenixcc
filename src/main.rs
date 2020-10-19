@@ -5,9 +5,7 @@ use std::env;
 use std::process::exit;
 use std::fs;
 
-use fenixcc::lexer::Lexer;
-use fenixcc::parser::Parser;
-use fenixcc::source::Source;
+use fenixcc::{Lexer, Parser, Source};
 
 fn print_help(program: &str, opts: Options) {
     let brief = format!("Usage: {} INPUT [options]", program);

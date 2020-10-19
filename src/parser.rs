@@ -1,6 +1,7 @@
 use crate::ast::AST;
-use crate::{sym, ast};
-use crate::token::{Token, TokenKind, Symbol};
+use crate::{sym, ast, Token, TokenKind};
+#[cfg(test)]
+use crate::Symbol;
 
 #[derive(Debug, Clone)]
 pub enum Error {

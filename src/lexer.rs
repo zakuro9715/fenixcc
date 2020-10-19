@@ -1,6 +1,4 @@
-use crate::tok;
-use crate::token::{Loc, Symbol, Token, TokenKind};
-use crate::source::Source;
+use crate::{tok, Loc, Symbol, Token, TokenKind, Source};
 use std::char;
 use std::iter::Iterator;
 

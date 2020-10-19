@@ -106,13 +106,13 @@ impl Token {
 #[macro_export]
 macro_rules! tok {
     ($method:ident $(,$args:expr)* $(,)?) => (
-        Token::$method($($args),*)
+        $crate::Token::$method($($args),*)
     );
 }
 
 #[macro_export]
 macro_rules! sym {
-    ($sym:ident) => (TokenKind::Symbol(Symbol::$sym));
+    ($sym:ident) => ($crate::TokenKind::Symbol($crate::Symbol::$sym));
 }
 
 #[test]
