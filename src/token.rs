@@ -110,6 +110,14 @@ macro_rules! tok {
     );
 }
 
+#[cfg(test)]
+#[macro_export]
+macro_rules! head_tok {
+    ($method:ident $(,$args:expr)* $(,)?) => {
+        $crate::Token::$method($($args),*, $crate::Loc::head())
+    }
+}
+
 #[macro_export]
 macro_rules! sym {
     ($sym:ident) => ($crate::TokenKind::Symbol($crate::Symbol::$sym));
