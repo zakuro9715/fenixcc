@@ -11,18 +11,19 @@ impl Source {
             code: code.into().chars().collect(),
         }
     }
+
+    pub fn inline(code: impl Into<String>) -> Self {
+        Self::new("__inline__", code)
+    }
 }
 
 #[test]
-fn test_source_eq() {
-    let f1 = Source::new("f", "code");
-    let f2 = Source::new("f", "code");
-    let f3 = Source::new("f", "code2");
-    let f4 = Source::new("f1", "code");
-    assert_eq!(f1, f2);
-    assert_eq!(&f1, &f2);
-    assert_ne!(f1, f3);
-    assert_ne!(&f1, &f3);
-    assert_ne!(f1, f4);
-    assert_ne!(&f1, &f4);
+fn test_source_new() {
+    let emoji = "\u{1f408}";
+    let f1 = Source::new("f", emoji);
+    let f2 = Source::inline("code");
+    assert_eq!(f1.filename, "f".to_string());
+    assert_eq!(f1.code.len(), 1);
+    assert_eq!(f1.code[0].to_string().len(), 4);
+    assert_eq!(f2.code.len(), 4);
 }
