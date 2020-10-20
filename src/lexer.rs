@@ -108,7 +108,7 @@ impl<'a> Iterator for Lexer<'a> {
 
 #[test]
 fn test_lexer() {
-    let s = Source::new("".to_string(), "1 + 2 -\0  3\n0".to_string());
+    let s = Source::new("", "1 + 2 -\0  3\n0");
     let mut lexer = Lexer::new(&s).peekable();
 
     let tokens = vec![

@@ -5,20 +5,20 @@ pub struct Source {
 }
 
 impl Source {
-    pub fn new(filename: String, code: String) -> Self {
+    pub fn new(filename: impl Into<String>, code: impl Into<String>) -> Self {
         Self {
-            filename,
-            code: code.chars().collect(),
+            filename: filename.into(),
+            code: code.into().chars().collect(),
         }
     }
 }
 
 #[test]
 fn test_source_eq() {
-    let f1 = Source::new("f".to_string(), "code".to_string());
-    let f2 = Source::new("f".to_string(), "code".to_string());
-    let f3 = Source::new("f".to_string(), "code2".to_string());
-    let f4 = Source::new("f1".to_string(), "code".to_string());
+    let f1 = Source::new("f", "code");
+    let f2 = Source::new("f", "code");
+    let f3 = Source::new("f", "code2");
+    let f4 = Source::new("f1", "code");
     assert_eq!(f1, f2);
     assert_eq!(&f1, &f2);
     assert_ne!(f1, f3);
