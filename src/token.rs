@@ -1,3 +1,33 @@
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+pub struct Loc {
+    pub offset: usize,
+    pub line: usize,
+    pub col: usize,
+}
+
+impl Loc {
+    pub fn head() -> Loc {
+        Self {
+            offset: 0,
+            line: 1,
+            col: 1,
+        }
+    }
+
+    pub fn new(offset: usize, line: usize, col: usize) -> Loc {
+        Self { offset, line, col }
+    }
+}
+
+#[test]
+fn test_loc_new() {
+    let loc = Loc::new(1, 2, 3);
+    assert_eq!(loc.offset, 1);
+    assert_eq!(loc.line, 2);
+    assert_eq!(loc.col, 3);
+}
+
+
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Symbol {
     Plus,
@@ -36,35 +66,6 @@ fn test_token_kind_is_literal() {
     assert!(!TokenKind::Symbol(Symbol::Plus).is_literal());
     assert!(TokenKind::Int(0).is_literal());
     assert!(!TokenKind::EOF.is_literal());
-}
-
-#[derive(PartialEq, Eq, Debug, Clone, Copy)]
-pub struct Loc {
-    pub offset: usize,
-    pub line: usize,
-    pub col: usize,
-}
-
-impl Loc {
-    pub fn head() -> Loc {
-        Self {
-            offset: 0,
-            line: 1,
-            col: 1,
-        }
-    }
-
-    pub fn new(offset: usize, line: usize, col: usize) -> Loc {
-        Self { offset, line, col }
-    }
-}
-
-#[test]
-fn test_loc_new() {
-    let loc = Loc::new(1, 2, 3);
-    assert_eq!(loc.offset, 1);
-    assert_eq!(loc.line, 2);
-    assert_eq!(loc.col, 3);
 }
 
 #[derive(PartialEq, Debug, Clone)]
