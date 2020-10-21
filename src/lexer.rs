@@ -36,13 +36,11 @@ impl<'a> Lexer<'a> {
 mod tests {
     #[test]
     #[ignore]
-    fn test_eof() {
-    }
+    fn test_eof() {}
 
     #[test]
     #[ignore]
-    fn test_peek_char_and_next() {
-    }
+    fn test_peek_char_and_next() {}
 }
 
 impl<'a> Lexer<'a> {
@@ -99,21 +97,16 @@ mod read_tests {
 
     #[test]
     #[ignore]
-    fn test_read_while() {
-    }
+    fn test_read_while() {}
 
     #[test]
     #[ignore]
-    fn test_read_integer() {
-    }
+    fn test_read_integer() {}
 
     #[test]
     #[ignore]
-    fn test_test_consume() {
-    }
+    fn test_test_consume() {}
 }
-
-
 
 impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
@@ -128,7 +121,7 @@ impl<'a> Iterator for Lexer<'a> {
 
         Some(match self.peek_char() {
             '+' => {
-                 self.consume();
+                self.consume();
                 tok!(new_symbol, Symbol::Plus, loc)
             }
             '-' => {
@@ -158,7 +151,7 @@ fn test_lexer() {
         tok!(new_int, 3, Loc::new(10, 1, 11)),
         tok!(new_int, 0, Loc::new(12, 2, 1)),
         tok!(new_eof, Loc::new(13, 2, 2)),
-        tok!(new_eof, Loc::new(13, 2, 2))
+        tok!(new_eof, Loc::new(13, 2, 2)),
     ];
 
     for t in tokens.into_iter() {
