@@ -35,6 +35,11 @@ pub enum Symbol {
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]
+pub enum Keyword {
+    Return,
+}
+
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum TokenError {
     UnexpectedChar {
         actual: Option<char>,
@@ -47,6 +52,7 @@ pub enum TokenError {
 pub enum TokenKind {
     Error(TokenError),
     Symbol(Symbol),
+    Keyword(Keyword),
     Int(i64),
     EOF,
 }
@@ -81,6 +87,10 @@ impl Token {
 
     pub fn new_symbol(sym: Symbol, loc: Loc) -> Self {
         Self::new(TokenKind::Symbol(sym), loc)
+    }
+
+    pub fn new_keyword(keyword: Keyword, loc: Loc) -> Self {
+        Self::new(TokenKind::Keyword(keyword), loc)
     }
 
     pub fn new_int(v: i64, loc: Loc) -> Self {
@@ -123,6 +133,13 @@ macro_rules! head_tok {
 macro_rules! sym {
     ($sym:ident) => {
         $crate::TokenKind::Symbol($crate::Symbol::$sym)
+    };
+}
+
+#[macro_export]
+macro_rules! keyword {
+    ($sym:ident) => {
+        $crate::TokenKind::Keyword($crate::Keyword::$sym)
     };
 }
 
