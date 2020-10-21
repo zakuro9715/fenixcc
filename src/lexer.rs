@@ -10,10 +10,10 @@ pub struct Lexer<'a> {
 #[macro_export]
 macro_rules! lex {
     ($code:expr) => (
-        Lexer::new(&Source::inline($code))
+        &Lexer::new(&Source::inline($code))
     );
     ($finemae: expr, $code:expr) => (
-        Lexer::new(&Source::new(filename, $code))
+        &Lexer::new(&Source::new(filename, $code))
     );
 }
 
@@ -45,7 +45,36 @@ impl<'a> Lexer<'a> {
     fn skip_whitespaces(&mut self) {
         let _ = self.read_while(|c| c.is_whitespace());
     }
+}
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::char;
+
+    #[test]
+    fn test_eof() {
+        let mut lex = lex!("code");
+        assert!(!lex.eof());
+        lex.next();
+        assert!(lex.eof());
+        lex.next();
+        assert!(lex.eof());
+    }
+
+    #[test]
+    fn test_peek_char_and_next() {
+        let mut lex = lex!("abc");
+        assert_eq!(lex.peek_char(), 'a');
+        lex.consume();
+        assert_eq!(lex.peek_char(), 'b');
+        lex.consume();
+        assert_eq!(lex.peek_char(), 'c');
+        assert!(lex.eof());
+    }
+}
+
+impl<'a> Lexer<'a> {
     fn read_while<F: Fn(char) -> bool>(&mut self, f: F) -> String {
         let start_loc = self.loc;
         while !self.eof() && f(self.peek_char()) {
@@ -92,10 +121,10 @@ impl<'a> Lexer<'a> {
     }
 }
 
-impl<'a> Iterator for &Lexer<'a> {
+impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
-        self.skip_whitespaces();
+        &self.skip_whitespaces();
 
         let loc = self.loc;
 
@@ -105,7 +134,7 @@ impl<'a> Iterator for &Lexer<'a> {
 
         Some(match self.peek_char() {
             '+' => {
-                let _ = self.consume();
+                 self.consume();
                 tok!(new_symbol, Symbol::Plus, loc)
             }
             '-' => {
@@ -138,6 +167,6 @@ fn test_lexer() {
         tok!(new_eof, Loc::new(13, 2, 2))
     ];
 
-    tokens.iter().for_each(|t, _| assert_eq(t1, lexer.next()));
-    assert_eq(None(), lexer.next())
+    tokens.iter().for_each(|t| assert_eq!(t1, lexer.next()));
+    assert_eq!(None(), lexer.next())
 }
