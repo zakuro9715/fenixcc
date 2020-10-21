@@ -2,6 +2,7 @@ setup:
   command: |
     rustup component add rustfmt
     rustup component add clippy
+    cargo install grcov
 
 build:
   exec: cargo build
