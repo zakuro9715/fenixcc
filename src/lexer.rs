@@ -7,8 +7,23 @@ pub struct Lexer<'a> {
     loc: Loc,
 }
 
+#[macro_export]
+macro_rules! lex {
+    ($code:expr) => (
+        Lexer::new(&Source::inline($code))
+    );
+    ($finemae: expr, $code:expr) => (
+        Lexer::new(&Source::new(filename, $code))
+    );
+}
+
+macro_rules! match_stmt {
+    ( $s:stmt ) => { { println!("stmt: {}", stringify!($s)) } };
+}
+
+//lexer!(fn eog(&self) -> bool {});
 impl<'a> Lexer<'a> {
-    pub fn new(source: &'a Source) -> Lexer {
+    pub fn new(source: &'a Source) -> Self {
         Self {
             loc: Loc::head(),
             source,
@@ -77,7 +92,7 @@ impl<'a> Lexer<'a> {
     }
 }
 
-impl<'a> Iterator for Lexer<'a> {
+impl<'a> Iterator for &Lexer<'a> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
         self.skip_whitespaces();
@@ -120,12 +135,9 @@ fn test_lexer() {
         tok!(new_int, 3, Loc::new(10, 1, 11)),
         tok!(new_int, 0, Loc::new(12, 2, 1)),
         tok!(new_eof, Loc::new(13, 2, 2)),
-        tok!(new_eof, Loc::new(13, 2, 2)),
+        tok!(new_eof, Loc::new(13, 2, 2))
     ];
-    for t2 in tokens {
-        if let Some(t1p) = lexer.peek() {
-            assert_eq!(*t1p, t2);
-        }
-        assert_eq!(lexer.next(), Some(t2));
-    }
+
+    tokens.iter().for_each(|t, _| assert_eq(t1, lexer.next()));
+    assert_eq(None(), lexer.next())
 }
