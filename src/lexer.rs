@@ -7,21 +7,6 @@ pub struct Lexer<'a> {
     loc: Loc,
 }
 
-#[macro_export]
-macro_rules! lex {
-    ($code:expr) => (
-        &mut Lexer::new(&Source::inline($code))
-    );
-    ($finemae: expr, $code:expr) => (
-        &mut Lexer::new(&Source::new(filename, $code))
-    );
-}
-
-macro_rules! match_stmt {
-    ( $s:stmt ) => { { println!("stmt: {}", stringify!($s)) } };
-}
-
-//lexer!(fn eog(&self) -> bool {});
 impl<'a> Lexer<'a> {
     pub fn new(source: &'a Source) -> Self {
         Self {
@@ -49,9 +34,6 @@ impl<'a> Lexer<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::char;
-
     #[test]
     #[ignore]
     fn test_eof() {
