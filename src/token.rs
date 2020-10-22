@@ -32,6 +32,7 @@ fn test_loc_new() {
 pub enum Symbol {
     Plus,
     Minus,
+    Semicolon,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]
@@ -138,8 +139,8 @@ macro_rules! sym {
 
 #[macro_export]
 macro_rules! keyword {
-    ($sym:ident) => {
-        $crate::TokenKind::Keyword($crate::Keyword::$sym)
+    ($key:ident) => {
+        $crate::TokenKind::Keyword($crate::Keyword::$key)
     };
 }
 

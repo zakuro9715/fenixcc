@@ -4,11 +4,14 @@ setup:
     rustup component add clippy
     cargo install grcov
 
+cargo:
+  command: cargo $@
+
 build:
-  exec: cargo build
+  command: cargo build $@
 
 run:
-  exec: cargo run --
+  command: cargo run
 
 compile-example:
   command: |
@@ -22,13 +25,20 @@ lint:
 clean:
   exec: cargo clean
 
-rust-test:
-  exec: cargo test
+shell-test:
+  commands: |
+      {{ .cargo }} -c {{ .robo.file }} @rust-test $@
+      {{ .cargo }} -c {{ .robo.file }} @shellltest $@
 
 shell-test:
   script: ./shell-tests/run
 
 test:
   command: |
-    robo -c {{ .robo.file }} rust-test $@
-    robo -c {{ .robo.file }} shell-test $@
+    {{ .cmd.c }} {{ .chain }} rust-test $@
+    {{ .cmd.c }} {{ .chain }} shell--test $@
+
+
+varables:
+  cargo: cargo
+  chain: -c {{ .robo.file }}

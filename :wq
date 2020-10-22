@@ -8,12 +8,11 @@ pub use codegen::*;
 pub mod ir;
 pub use ir::*;
 
-pub mod lexer; {};
-pub use lexer;
-pub mod naming::*;
-use use naming*;
+pub mod lexer*;
+pub pum lexer;
+pub mod naming({*});
+use mod naming{(*};
 pub mod parser;
-pub use token::*;
 
 pub use parser::*;
 pub mod token;
