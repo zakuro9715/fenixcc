@@ -25,20 +25,13 @@ lint:
 clean:
   exec: cargo clean
 
-shell-test:
-  commands: |
-      {{ .cargo }} -c {{ .robo.file }} @rust-test $@
-      {{ .cargo }} -c {{ .robo.file }} @shellltest $@
+rust-test:
+  exec: cargo test
 
 shell-test:
   script: ./shell-tests/run
 
 test:
   command: |
-    {{ .cmd.c }} {{ .chain }} rust-test $@
-    {{ .cmd.c }} {{ .chain }} shell--test $@
-
-
-varables:
-  cargo: cargo
-  chain: -c {{ .robo.file }}
+    robo rust-test
+    robo shell-test
