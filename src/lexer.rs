@@ -33,17 +33,6 @@ impl<'a> Lexer<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    #[ignore]
-    fn test_eof() {}
-
-    #[test]
-    #[ignore]
-    fn test_peek_char_and_next() {}
-}
-
 impl<'a> Lexer<'a> {
     fn read_while<F: Fn(char) -> bool>(&mut self, f: F) -> String {
         let start_loc = self.loc;
@@ -92,23 +81,6 @@ impl<'a> Lexer<'a> {
     }
 }
 
-#[cfg(test)]
-mod read_tests {
-    use super::*;
-    use std::char;
-
-    #[test]
-    #[ignore]
-    fn test_read_while() {}
-
-    #[test]
-    #[ignore]
-    fn test_read_integer() {}
-
-    #[test]
-    #[ignore]
-    fn test_test_consume() {}
-}
 
 impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
@@ -141,7 +113,7 @@ impl<'a> Iterator for Lexer<'a> {
 
 #[test]
 fn test_lexer() {
-    let s = Source::new("", "1 + 2 -\0  3\nreturn 0");
+    let s = Source::new("", "1 + 2 -\0  3");
     let mut lexer = Lexer::new(&s).peekable();
 
     let tokens = vec![
@@ -151,10 +123,7 @@ fn test_lexer() {
         tok!(new_symbol, Symbol::Minus, Loc::new(6, 1, 7)),
         tok!(new_invalid_char, '\0', Loc::new(7, 1, 8)),
         tok!(new_int, 3, Loc::new(10, 1, 11)),
-        tok!(new, keyword!(Return), Loc::new(12, 2, 1)),
-        tok!(new_int, 0, Loc::new(19, 2, 1)),
-        tok!(new_eof, Loc::new(13, 2, 3)),
-        tok!(new_eof, Loc::new(13, 2, 3)),
+        tok!(new_eof, Loc::new(11, 1, 12)),
     ];
 
     for t in tokens.into_iter() {
