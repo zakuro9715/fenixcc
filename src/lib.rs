@@ -10,8 +10,6 @@ pub use ir::*;
 
 pub mod lexer;
 pub use lexer::*;
-pub mod naming;
-pub use naming::*;
 pub mod parser;
 pub use parser::*;
 
