@@ -3,7 +3,7 @@ use crate::ast::AST;
 use crate::Symbol;
 use crate::{ast, sym, Token, TokenKind};
 
-#[derive(Debug, Clone)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Error {
     Message(Token, String),
     EOF,

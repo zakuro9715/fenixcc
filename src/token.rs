@@ -75,7 +75,7 @@ fn test_token_kind_is_literal() {
     assert!(!TokenKind::EOF.is_literal());
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Token {
     pub kind: TokenKind,
     pub loc: Loc,
