@@ -56,7 +56,7 @@ impl<'a> Lexer<'a> {
 
     fn consume(&mut self) {
         if self.eof() {
-            return;
+            panic!("Cannot consume after eof");
         }
         match self.peek_char() {
             '\n' => {
@@ -79,6 +79,17 @@ impl<'a> Lexer<'a> {
             }
         };
     }
+
+    fn consume_and(&mut self, t: Token) -> Token {
+        self.consume_n_and(1, t)
+    }
+
+    fn consume_n_and(&mut self, n: usize, t: Token) -> Token {
+        for _ in 0..n {
+            self.consume()
+        }
+        t
+    }
 }
 
 
@@ -94,19 +105,10 @@ impl<'a> Iterator for Lexer<'a> {
         }
 
         Some(match self.peek_char() {
-            '+' => {
-                self.consume();
-                tok!(new_symbol, Symbol::Plus, loc)
-            }
-            '-' => {
-                let _ = self.consume();
-                tok!(new_symbol, Symbol::Minus, loc)
-            }
+            '+' => self.consume_and(tok!(new_symbol, Symbol::Plus, loc)),
+            '-' => self.consume_and(tok!(new_symbol, Symbol::Minus, loc)),
             c if c.is_ascii_digit() => self.read_integer(),
-            c => {
-                let _ = self.consume();
-                tok!(new_invalid_char, c, loc)
-            }
+            c => self.consume_and(tok!(new_invalid_char, c, loc)),
         })
     }
 }
