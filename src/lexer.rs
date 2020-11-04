@@ -104,9 +104,17 @@ impl<'a> Iterator for Lexer<'a> {
             return Some(tok!(new_eof, loc));
         }
 
+        macro_rules! read_sym {
+            ($sym:ident; $n:expr) => {
+                self.consume_n_and($n, tok!(new_symbol, Symbol::$sym, loc))
+            };
+        }
+        macro_rules! read_sym1 {
+            ($sym:ident) => { read_sym!($sym; 1) };
+        }
         Some(match self.peek_char() {
-            '+' => self.consume_and(tok!(new_symbol, Symbol::Plus, loc)),
-            '-' => self.consume_and(tok!(new_symbol, Symbol::Minus, loc)),
+            '+' => read_sym1!(Plus),
+            '-' => read_sym1!(Minus),
             c if c.is_ascii_digit() => self.read_integer(),
             c => self.consume_and(tok!(new_invalid_char, c, loc)),
         })
