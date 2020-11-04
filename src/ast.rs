@@ -1,15 +1,30 @@
 use crate::{sym, Token, TokenKind};
 #[cfg(test)]
-use crate::{tok, Loc};
+use crate::{tok, head_tok, Loc};
 
-#[derive(Debug, Clone)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct AST {
     pub token: Token,
     pub ir_size: usize,
     pub node: Node,
 }
 
-#[derive(Debug, Clone)]
+#[macro_export]
+macro_rules! ast {
+    ($method:ident, $($args:expr),* $(,)?) => (
+        $crate::AST::$method($($args),*)
+        );
+}
+
+#[cfg(test)]
+macro_rules! ast_zero_literal {
+    () => {
+        ast!(new_literal, $crate::tok!(new_int, 0, $crate::Loc::head()))
+    };
+}
+
+
+#[derive(Eq, Debug, Clone)]
 pub enum Node {
     Addition(Box<AST>, Box<AST>),
     Subtraction(Box<AST>, Box<AST>),
@@ -24,6 +39,94 @@ fn calc_ir_size(v: &Node) -> usize {
         IntLiteral(_) => 1,
     }
 }
+
+impl PartialEq for Node {
+    fn eq(&self, other: &Self) -> bool {
+        use Node::*;
+        macro_rules! eq1 {
+            ($node:ident)=> {
+                if let ($node(lhs), $node(rhs)) = (self, other) {
+                    *lhs == *rhs
+                } else {
+                    false
+                }
+            }
+        }
+        macro_rules! eq2 {
+            ($node:ident) => {
+                if let ($node(l1, r1), $node(l2, r2)) = (self, other) {
+                    *l1 == *l2 && *r1 == *r2
+                } else {
+                    false
+                }
+            };
+        }
+        match self {
+            Addition(_, _) => eq2!(Addition),
+            Subtraction(_, _) => eq2!(Subtraction),
+            IntLiteral(_) => eq1!(IntLiteral),
+        }
+    }
+}
+#[test]
+fn test_node_eq() {
+    use Node::*;
+    assert_eq!(
+        Addition(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+        Addition(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+    );
+    assert_ne!(
+        Addition(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+        Addition(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 1))),
+        ),
+    );
+    assert_eq!(
+        Subtraction(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+        Subtraction(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+    );
+    assert_ne!(
+        Subtraction(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+        Subtraction(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 1))),
+        ),
+    );
+
+    assert_ne!(
+        Addition(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+        Subtraction(
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+            Box::new(ast!(new_literal, head_tok!(new_int, 0))),
+        ),
+    );
+
+    assert_eq!(IntLiteral(0), IntLiteral(0));
+    assert_ne!(IntLiteral(0), IntLiteral(1));
+}
+
 
 impl AST {
     pub fn new(token: Token, node: Node) -> Self {
@@ -57,19 +160,6 @@ impl AST {
             },
         )
     }
-}
-#[macro_export]
-macro_rules! ast {
-    ($method:ident, $($args:expr),* $(,)?) => (
-        $crate::AST::$method($($args),*)
-    );
-}
-
-#[cfg(test)]
-macro_rules! ast_zero_literal {
-    () => {
-        ast!(new_literal, $crate::tok!(new_int, 0, $crate::Loc::head()))
-    };
 }
 
 #[test]
