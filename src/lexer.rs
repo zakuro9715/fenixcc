@@ -1,4 +1,4 @@
-use crate::{tok, keyword, Loc, Source, Symbol, Token, TokenKind};
+use crate::{tok, Loc, Source, Symbol, Token, TokenKind};
 use std::char;
 use std::iter::Iterator;
 
@@ -111,22 +111,38 @@ impl<'a> Iterator for Lexer<'a> {
     }
 }
 
-#[test]
-fn test_lexer() {
-    let s = Source::new("", "1 + 2 -\0  3");
-    let mut lexer = Lexer::new(&s).peekable();
+#[cfg(test)]
+mod tests {
+    use crate::{tok, sym, Source, Lexer, Symbol, Token, Loc};
 
-    let tokens = vec![
-        tok!(new_int, 1, Loc::new(0, 1, 1)),
-        tok!(new_symbol, Symbol::Plus, Loc::new(2, 1, 3)),
-        tok!(new_int, 2, Loc::new(4, 1, 5)),
-        tok!(new_symbol, Symbol::Minus, Loc::new(6, 1, 7)),
-        tok!(new_invalid_char, '\0', Loc::new(7, 1, 8)),
-        tok!(new_int, 3, Loc::new(10, 1, 11)),
-        tok!(new_eof, Loc::new(11, 1, 12)),
-    ];
+    fn test_lex(code :&str, expected :Vec<Token>) {
+        let s = Source::new("", code);
+        let mut lexer = Lexer::new(&s).peekable();
+        for t in expected.into_iter() {
+            assert_eq!(Some(t), lexer.next());
+        }
+    }
 
-    for t in tokens.into_iter() {
-        assert_eq!(Some(t), lexer.next());
+    #[test]
+    fn test_simple() {
+        test_lex("1 + 11 -\0  \n3", vec![
+            tok!(new_int, 1, Loc::new(0, 1, 1)),
+            tok!(new_symbol, Symbol::Plus, Loc::new(2, 1, 3)),
+            tok!(new_int, 11, Loc::new(4, 1, 5)),
+            tok!(new_symbol, Symbol::Minus, Loc::new(7, 1, 8)),
+            tok!(new_invalid_char, '\0', Loc::new(8, 1, 9)),
+            tok!(new_int, 3, Loc::new(12, 2, 1)),
+            tok!(new_eof, Loc::new(13, 2, 2)),
+            tok!(new_eof, Loc::new(13, 2, 2)),
+        ]);
+    }
+
+    #[test]
+    fn test_symbols() {
+        test_lex("+-", vec![
+            tok!(new, sym!(Plus), Loc::new(0, 1, 1)),
+            tok!(new, sym!(Minus), Loc::new(1, 1, 2)),
+            tok!(new_eof, Loc::new(2, 1, 3)),
+        ])
     }
 }
