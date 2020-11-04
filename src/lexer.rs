@@ -145,4 +145,15 @@ mod tests {
             tok!(new_eof, Loc::new(2, 1, 3)),
         ])
     }
+
+    #[test]
+    fn test_newline() {
+        test_lex("0\r0\r\n0\n\n\r0", vec![
+            tok!(new_int, 0, Loc::new(0, 1, 1)),
+            tok!(new_int, 0, Loc::new(2, 2, 1)),
+            tok!(new_int, 0, Loc::new(5, 3, 1)),
+            tok!(new_int, 0, Loc::new(9, 6, 1)),
+            tok!(new_eof, Loc::new(10, 6, 2)),
+        ])
+    }
 }
