@@ -4,7 +4,7 @@ use crate::{tok, head_tok, Loc};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct AST {
-    pub token: Token,
+    pub token: Option<Token>,
     pub node: Node,
 }
 
@@ -12,7 +12,7 @@ pub struct AST {
 macro_rules! ast {
     ($method:ident, $($args:expr),* $(,)?) => (
         $crate::AST::$method($($args),*)
-        );
+    );
 }
 
 #[cfg(test)]
@@ -120,7 +120,7 @@ fn test_node_eq() {
 
 
 impl AST {
-    pub fn new(token: Token, node: Node) -> Self {
+    pub fn new(token: Option<Token>, node: Node) -> Self {
         Self {
             token,
             node,
@@ -130,7 +130,7 @@ impl AST {
     pub fn new_binary_expr(lhs: AST, op: Token, rhs: AST) -> Self {
         let kind = op.kind.clone();
         Self::new(
-            op,
+            Some(op),
             match kind {
                 sym!(Plus) => Node::Addition(Box::new(lhs), Box::new(rhs)),
                 sym!(Minus) => Node::Subtraction(Box::new(lhs), Box::new(rhs)),
@@ -142,7 +142,7 @@ impl AST {
     pub fn new_literal(token: Token) -> AST {
         let kind = token.kind.clone();
         Self::new(
-            token,
+            Some(token),
             match kind {
                 TokenKind::Int(i) => Node::IntLiteral(i),
                 _ => panic!("Invalid token"),
