@@ -15,9 +15,9 @@ run:
 
 compile-example:
   command: |
-    mkdir -p ./tmp
+    mkdir -p ./tmp/
     cargo run "./examples/$1" > "./tmp/$1.s"
-    clang "./tmp/$1.s"
+    clang "./tmp/$1.s" -o "./tmp/a.out"
 
 lint:
   exec: cargo clippy

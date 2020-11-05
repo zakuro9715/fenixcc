@@ -15,7 +15,7 @@ pub mod x86_64 {
     fn compile_instruction(inst: &Instruction) -> String {
         match inst {
             PushI(i) => format!("\tpush {}\n", i),
-            PopI => "\tpop\n".to_string(),
+            PopI => "\tpop rax\n".to_string(),
             AddI => compile_binary_operation("add"),
             SubI => compile_binary_operation("sub"),
         }
@@ -30,7 +30,6 @@ pub mod x86_64 {
             .global main\n\
             main: \n\
             {}\n\
-            \tpop rax\n\
             \tret\n\
         ", body)
     }

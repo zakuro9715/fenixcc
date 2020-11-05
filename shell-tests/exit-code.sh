@@ -1,5 +1,5 @@
 robo compile-example expr.c
-./a.out
+./tmp/a.out
 
 actual="$?"
 expected=7

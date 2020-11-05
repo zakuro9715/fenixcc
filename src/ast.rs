@@ -10,6 +10,8 @@ pub struct AST {
 
 #[derive(Eq, Debug, Clone)]
 pub enum Node {
+    Block(Vec<AST>),
+    ExprStatement(Box<AST>),
     Addition(Box<AST>, Box<AST>),
     Subtraction(Box<AST>, Box<AST>),
     IntLiteral(i64),
@@ -20,13 +22,13 @@ impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
         use Node::*;
         macro_rules! eq1 {
-            ($node:ident)=> {
+            ($node:ident) => {
                 if let ($node(lhs), $node(rhs)) = (self, other) {
                     *lhs == *rhs
                 } else {
                     false
                 }
-            }
+            };
         }
         macro_rules! eq2 {
             ($node:ident) => {
@@ -41,6 +43,8 @@ impl PartialEq for Node {
             Addition(_, _) => eq2!(Addition),
             Subtraction(_, _) => eq2!(Subtraction),
             IntLiteral(_) => eq1!(IntLiteral),
+            Block(_) => eq1!(Block),
+            ExprStatement(_) => eq1!(ExprStatement),
         }
     }
 }
@@ -101,6 +105,13 @@ fn test_node_eq() {
 
     assert_eq!(IntLiteral(0), IntLiteral(0));
     assert_ne!(IntLiteral(0), IntLiteral(1));
+    assert_eq!(Block(vec![ast_zero_literal!()]), Block(vec![ast_zero_literal!()]));
+    assert_ne!(Block(vec![ast_zero_literal!()]), Block(vec![ast!(new_literal, head_tok!(new_int, 1))]));
+    assert_eq!(ExprStatement(Box::new(ast_zero_literal!())), ExprStatement(Box::new(ast_zero_literal!())));
+    assert_ne!(
+        ExprStatement(Box::new(ast_zero_literal!())),
+        ExprStatement(Box::new(ast!(new_literal, head_tok!(new_int, 1)))),
+    );
 }
 
 
@@ -133,6 +144,14 @@ impl AST {
                 _ => panic!("Invalid token"),
             },
         )
+    }
+
+    pub fn new_block(items: Vec<AST>) -> Self {
+       Self::new(None, Node::Block(items))
+    }
+
+    pub fn new_expr_statement(expr :AST) -> Self {
+        Self::new(None, Node::ExprStatement(Box::new(expr)))
     }
 }
 
@@ -174,25 +193,49 @@ fn test_new_binary_expr_invalid() {
     );
 }
 
-pub trait Visitor<R> {
-    fn visit(&mut self, ast: &AST) -> R {
+
+pub trait Visitor<R: Default, E> {
+    fn visit(&mut self, ast: &AST) -> Result<R, E> {
         match &ast.node {
+            Node::Block(items) => {
+                for v in items {
+                    self.visit(v)?;
+                }
+                Ok(Default::default())
+            }
+            Node::ExprStatement(item) => {
+                self.visit_expr_statement_left()?;
+                let v = self.visit(item.as_ref())?;
+                self.visit_expr_statement_right(v)
+            }
             Node::IntLiteral(i) => self.visit_int_literal(*i),
             Node::Addition(lhs, rhs) => {
-                let l = self.visit(&lhs);
-                let r = self.visit(&rhs);
+                let l = self.visit(&lhs)?;
+                let r = self.visit(&rhs)?;
                 self.visit_addition(l, r)
             }
             Node::Subtraction(lhs, rhs) => {
-                let l = self.visit(&lhs);
-                let r = self.visit(&rhs);
+                let l = self.visit(&lhs)?;
+                let r = self.visit(&rhs)?;
                 self.visit_subtraction(l, r)
             }
         }
     }
-    fn visit_int_literal(&mut self, i: i64) -> R;
-    fn visit_addition(&mut self, lhs: R, rhs: R) -> R;
-    fn visit_subtraction(&mut self, lhs: R, rhs: R) -> R;
+    fn visit_expr_statement_left(&mut self) -> Result<R, E> {
+        Ok(Default::default())
+    }
+    fn visit_expr_statement_right(&mut self, item: R) -> Result<R, E> {
+        Ok(Default::default())
+    }
+    fn visit_int_literal(&mut self, i: i64) -> Result<R, E> {
+        Ok(Default::default())
+    }
+    fn visit_addition(&mut self, lhs: R, rhs: R) -> Result<R, E> {
+        Ok(Default::default())
+    }
+    fn visit_subtraction(&mut self, lhs: R, rhs: R) -> Result<R, E> {
+        Ok(Default::default())
+    }
 }
 
 mod ir {
@@ -218,7 +261,7 @@ mod ir {
         }
 
         pub fn translate(&mut self, ast: &AST) -> IR {
-            self.visit(ast);
+            self.visit(ast).unwrap();
             self.take()
         }
 
@@ -227,17 +270,22 @@ mod ir {
         }
     }
 
-    impl Visitor<()> for IRTranslator {
-        fn visit_int_literal(&mut self, i: i64) -> () {
+    impl Visitor<(), ()> for IRTranslator {
+        fn visit_expr_statement_right(&mut self, _: ()) -> Result<(), ()> {
+            self.buffer.push(PopI);
+            Ok(())
+        }
+        fn visit_int_literal(&mut self, i: i64) -> Result<(), ()> {
             self.buffer.push(PushI(i));
+            Ok(())
         }
-        fn visit_addition(&mut self, _: (), _: ()) {
+        fn visit_addition(&mut self, _: (), _: ()) -> Result<(), ()>{
             self.buffer.push(AddI);
-            ()
+            Ok(())
         }
-        fn visit_subtraction(&mut self, _: (), _: ()) {
+        fn visit_subtraction(&mut self, _: (), _: ()) -> Result<(), ()> {
             self.buffer.push(SubI);
-            ()
+            Ok(())
         }
     }
 

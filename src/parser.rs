@@ -1,5 +1,4 @@
 use crate::ast::AST;
-#[cfg(test)]
 use crate::Symbol;
 use crate::{ast, sym, Token, TokenKind};
 
@@ -24,8 +23,31 @@ impl<Tokens: Iterator<Item = Token>> Parser<Tokens> {
     }
 
     pub fn parse(&mut self) -> Result<AST> {
-        self.parse_expr()
+        let mut items: Vec<AST> = vec![];
+        while !self.eof() {
+            items.push(self.parse_statement()?);
+        }
+        Ok(ast!(new_block, items))
     }
+
+
+    pub fn parse_statement(&mut self) -> Result<AST> {
+        let ast = match self.peek_token().kind {
+            _ => ast!(new_expr_statement, self.parse_expr()?),
+        };
+        if self.peek_token().kind != sym!(Semicolon) {
+            return Err(
+                Error::Message(self.peek_token().clone(), "Expected semicolon".to_string())
+            )
+        }
+        self.next_token();
+        return Ok(ast)
+    }
+
+    fn eof(&mut self) -> bool {
+        self.peek_token().kind == TokenKind::EOF
+    }
+
 
     fn peek_token(&mut self) -> &Token {
         self.tokens.peek().unwrap()
@@ -68,36 +90,53 @@ impl<Tokens: Iterator<Item = Token>> Parser<Tokens> {
 }
 
 #[cfg(test)]
-use crate::tok;
-#[cfg(test)]
-use crate::token::Loc;
+mod tests {
+    use crate::{ast, tok, sym, Loc, Parser};
 
-#[test]
-fn test_expr() {
-    let tokens = vec![
-        tok!(new_int, 0, Loc::new(0, 1, 1)),
-        tok!(new_symbol, Symbol::Plus, Loc::new(1, 1, 2)),
-        tok!(new_int, 0, Loc::new(2, 1, 3)),
-        tok!(new_symbol, Symbol::Minus, Loc::new(3, 1, 4)),
-        tok!(new_int, 0, Loc::new(4, 1, 5)),
-        tok!(new_eof, Loc::new(4, 1, 6)),
-    ];
-    let v = Parser::new(tokens.clone().into_iter()).parse().unwrap();
-    assert_eq!(
-        format!("{:?}", v),
-        format!(
-            "{:?}",
-            ast!(
-                new_binary_expr,
+    #[test]
+    fn test_expr() {
+        let tokens = vec![
+            tok!(new_int, 0, Loc::new(0, 1, 1)),
+            tok!(new, sym!(Plus), Loc::new(1, 1, 2)),
+            tok!(new_int, 0, Loc::new(2, 1, 3)),
+            tok!(new, sym!(Minus), Loc::new(3, 1, 4)),
+            tok!(new_int, 0, Loc::new(4, 1, 5)),
+            tok!(new_eof, Loc::new(4, 1, 6)),
+        ];
+        let v = Parser::new(tokens.clone().into_iter()).parse_expr().unwrap();
+        assert_eq!(
+            format!("{:?}", v),
+            format!(
+                "{:?}",
                 ast!(
                     new_binary_expr,
-                    ast!(new_literal, tokens[0].clone()),
-                    tokens[1].clone(),
-                    ast!(new_literal, tokens[2].clone()),
-                ),
-                tokens[3].clone(),
-                ast!(new_literal, tokens[4].clone()),
-            )
-        ),
-    );
+                    ast!(
+                        new_binary_expr,
+                        ast!(new_literal, tokens[0].clone()),
+                        tokens[1].clone(),
+                        ast!(new_literal, tokens[2].clone()),
+                    ),
+                    tokens[3].clone(),
+                    ast!(new_literal, tokens[4].clone()),
+                )
+            ),
+        );
+    }
+
+    #[test]
+    fn test_block() {
+        let tokens = vec![
+            tok!(new_int, 0, Loc::new(0, 1, 1)),
+            tok!(new, sym!(Semicolon), Loc::new(1, 1, 2)),
+            tok!(new_eof, Loc::new(2, 1, 3)),
+        ];
+        let v = Parser::new(tokens.clone().into_iter()).parse().unwrap();
+        assert_eq!(v, ast!(
+            new_block,
+            vec![ast!(
+                new_expr_statement,
+                ast!(new_literal, tokens[0].clone()),
+            )]
+        ));
+    }
 }
