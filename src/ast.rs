@@ -5,7 +5,6 @@ use crate::{tok, head_tok, Loc};
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct AST {
     pub token: Token,
-    pub ir_size: usize,
     pub node: Node,
 }
 
@@ -31,14 +30,6 @@ pub enum Node {
     IntLiteral(i64),
 }
 
-// Children have correct ir_size
-fn calc_ir_size(v: &Node) -> usize {
-    use Node::*;
-    match v {
-        Addition(lhs, rhs) | Subtraction(lhs, rhs) => lhs.ir_size + rhs.ir_size + 1,
-        IntLiteral(_) => 1,
-    }
-}
 
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
@@ -130,11 +121,9 @@ fn test_node_eq() {
 
 impl AST {
     pub fn new(token: Token, node: Node) -> Self {
-        let ir_size = calc_ir_size(&node);
         Self {
             token,
             node,
-            ir_size,
         }
     }
 
@@ -228,7 +217,7 @@ mod ir {
 
     impl From<AST> for IR {
         fn from(ast: AST) -> IR {
-            IRTranslator::new(ast.ir_size).translate(&ast)
+            IRTranslator::new().translate(&ast)
         }
     }
 
@@ -237,9 +226,9 @@ mod ir {
     }
 
     impl IRTranslator {
-        pub fn new(capacity: usize) -> Self {
+        pub fn new() -> Self {
             Self {
-                buffer: IR::with_capacity(capacity),
+                buffer: IR::new(),
             }
         }
 
@@ -275,7 +264,7 @@ mod ir {
 
         #[test]
         fn test_translate() {
-            let mut t = IRTranslator::new(1);
+            let mut t = IRTranslator::new();
             let ir = t.translate(&ast!(
                 new_binary_expr,
                 ast!(
@@ -293,7 +282,7 @@ mod ir {
 
         #[test]
         fn test_take() {
-            let mut t = IRTranslator::new(1);
+            let mut t = IRTranslator::new();
             t.buffer = vec![PopI];
             assert_eq!(t.take(), vec![PopI]);
             assert_eq!(t.buffer, vec![]);
