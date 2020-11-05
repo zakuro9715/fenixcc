@@ -1,6 +1,8 @@
 pub use token::*;
 pub mod ast;
 pub use ast::*;
+pub mod translate;
+pub use translate::*;
 
 pub mod codegen;
 pub use codegen::*;
