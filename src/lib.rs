@@ -29,6 +29,6 @@ pub fn compile<'a>(filename: String) -> parser::Result<String> {
     let code = fs::read_to_string(&filename).unwrap();
     let source = &Source::new(filename, code);
     let ast = Parser::new(lexer::Lexer::new(source)).parse()?;
-    let ir = IRTranslator::new().translate(&ast);
+    let ir: IR = ast.into();
     Ok(x86_64::compile(&ir))
 }

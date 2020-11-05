@@ -39,7 +39,7 @@ pub mod x86_64 {
         let s = compile_instruction(&PushI(9));
         assert_eq!(1, s.lines().count());
         assert!(s.contains("push"));
-        assert!(s.contains("9"));
+        assert!(s.contains('9'));
     }
 
     #[test]

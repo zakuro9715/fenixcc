@@ -60,10 +60,7 @@ pub enum TokenKind {
 
 impl TokenKind {
     pub fn is_literal(&self) -> bool {
-        match self {
-            TokenKind::Int(_) => true,
-            _ => false,
-        }
+        matches!(self, TokenKind::Int(_))
     }
 }
 

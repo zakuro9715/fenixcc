@@ -96,7 +96,7 @@ impl<'a> Lexer<'a> {
 impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
     fn next(&mut self) -> Option<Token> {
-        &self.skip_whitespaces();
+        self.skip_whitespaces();
 
         let loc = self.loc;
 

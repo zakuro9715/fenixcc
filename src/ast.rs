@@ -1,6 +1,6 @@
-use crate::{ast, sym, Token, TokenKind};
+use crate::{sym, Token, TokenKind};
 #[cfg(test)]
-use crate::{ast_zero_literal, tok, head_tok, Loc};
+use crate::{ast, ast_zero_literal, tok, head_tok, Loc};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct AST {
@@ -175,9 +175,9 @@ fn test_new_binary_expr() {
     ));
     assert!(matches!(
         AST::new_binary_expr(
-            lhs.clone(),
+            lhs,
             tok!(new, sym!(Minus), Loc::head()),
-            rhs.clone(),
+            rhs,
         )
         .node,
         Node::Subtraction(_, _)
@@ -224,16 +224,16 @@ pub trait Visitor<R: Default, E> {
     fn visit_expr_statement_left(&mut self) -> Result<R, E> {
         Ok(Default::default())
     }
-    fn visit_expr_statement_right(&mut self, item: R) -> Result<R, E> {
+    fn visit_expr_statement_right(&mut self, _item: R) -> Result<R, E> {
         Ok(Default::default())
     }
-    fn visit_int_literal(&mut self, i: i64) -> Result<R, E> {
+    fn visit_int_literal(&mut self, _i: i64) -> Result<R, E> {
         Ok(Default::default())
     }
-    fn visit_addition(&mut self, lhs: R, rhs: R) -> Result<R, E> {
+    fn visit_addition(&mut self, _lhs: R, _rhs: R) -> Result<R, E> {
         Ok(Default::default())
     }
-    fn visit_subtraction(&mut self, lhs: R, rhs: R) -> Result<R, E> {
+    fn visit_subtraction(&mut self, _lhs: R, _rhs: R) -> Result<R, E> {
         Ok(Default::default())
     }
 }

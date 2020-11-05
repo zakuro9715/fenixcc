@@ -1,5 +1,5 @@
 use crate::ast::AST;
-use crate::Symbol;
+
 use crate::{ast, sym, Token, TokenKind};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
@@ -32,16 +32,14 @@ impl<Tokens: Iterator<Item = Token>> Parser<Tokens> {
 
 
     pub fn parse_statement(&mut self) -> Result<AST> {
-        let ast = match self.peek_token().kind {
-            _ => ast!(new_expr_statement, self.parse_expr()?),
-        };
+        let ast = ast!(new_expr_statement, self.parse_expr()?);
         if self.peek_token().kind != sym!(Semicolon) {
             return Err(
                 Error::Message(self.peek_token().clone(), "Expected semicolon".to_string())
             )
         }
         self.next_token();
-        return Ok(ast)
+        Ok(ast)
     }
 
     fn eof(&mut self) -> bool {

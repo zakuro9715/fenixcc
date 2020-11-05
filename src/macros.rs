@@ -5,10 +5,11 @@ macro_rules! ast {
     );
 }
 
+#[cfg(test)]
 #[macro_export]
 macro_rules! ast_zero_literal {
     () => {
-        ast!(new_literal, $crate::tok!(new_int, 0, $crate::Loc::head()))
+        $crate::ast!(new_literal, $crate::tok!(new_int, 0, $crate::Loc::head()))
     };
 }
 
