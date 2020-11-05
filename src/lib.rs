@@ -19,6 +19,9 @@ pub use token::*;
 pub mod source;
 pub use source::*;
 
+#[macro_use]
+mod macros;
+
 pub fn compile<'a>(filename: String) -> parser::Result<String> {
     use std::fs;
     let code = fs::read_to_string(&filename).unwrap();

@@ -1,27 +1,12 @@
-use crate::{sym, Token, TokenKind};
+use crate::{ast, sym, Token, TokenKind};
 #[cfg(test)]
-use crate::{tok, head_tok, Loc};
+use crate::{ast_zero_literal, tok, head_tok, Loc};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct AST {
     pub token: Option<Token>,
     pub node: Node,
 }
-
-#[macro_export]
-macro_rules! ast {
-    ($method:ident, $($args:expr),* $(,)?) => (
-        $crate::AST::$method($($args),*)
-    );
-}
-
-#[cfg(test)]
-macro_rules! ast_zero_literal {
-    () => {
-        ast!(new_literal, $crate::tok!(new_int, 0, $crate::Loc::head()))
-    };
-}
-
 
 #[derive(Eq, Debug, Clone)]
 pub enum Node {
@@ -260,7 +245,7 @@ mod ir {
     mod translater_tests {
         use super::IRTranslator;
         use crate::Instruction::*;
-        use crate::{head_tok, sym};
+        use crate::{ast, head_tok, sym};
 
         #[test]
         fn test_translate() {
