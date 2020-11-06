@@ -24,10 +24,11 @@ pub use source::*;
 #[macro_use]
 mod macros;
 
-pub fn compile<'a>(filename: String) -> parser::Result<String> {
+pub fn compile<'a>(filename: impl Into<String>) -> parser::Result<String> {
     use std::fs;
-    let code = fs::read_to_string(&filename).unwrap();
-    let source = &Source::new(filename, code);
+    let filename_string: String = filename.into();
+    let code = fs::read_to_string(&filename_string).unwrap();
+    let source = &Source::new(filename_string, code);
     let ast = Parser::new(lexer::Lexer::new(source)).parse()?;
     let ir: IR = ast.into();
     Ok(x86_64::compile(&ir))
