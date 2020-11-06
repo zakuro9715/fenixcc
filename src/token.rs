@@ -33,6 +33,7 @@ pub enum Symbol {
     Plus,
     Minus,
     Semicolon,
+    Equal,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]
