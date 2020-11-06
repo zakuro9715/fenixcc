@@ -36,3 +36,8 @@ tasks:
       shell:
         run:
           - ./shell-tests/run
+  watch:
+    tasks:
+      test:
+        run:
+          - cargo watch -x test
