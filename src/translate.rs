@@ -15,7 +15,7 @@ pub struct IRTranslator {
 impl IRTranslator {
     pub fn new() -> Self {
         Self {
-            buffer: IR::new(),
+            buffer: Default::default(),
         }
     }
 
@@ -68,15 +68,15 @@ mod tests {
             head_tok!(new, sym!(Minus)),
             ast!(new_literal, head_tok!(new_int, -3)),
         ));
-        assert_eq!(ir, vec![PushI(1), PushI(2), AddI, PushI(-3), SubI]);
-        assert_eq!(t.buffer, vec![]);
+        assert_eq!(ir, vec![PushI(1), PushI(2), AddI, PushI(-3), SubI].into());
+        assert_eq!(t.buffer, vec![].into());
     }
 
     #[test]
     fn test_take() {
         let mut t = IRTranslator::new();
-        t.buffer = vec![PopI];
-        assert_eq!(t.take(), vec![PopI]);
-        assert_eq!(t.buffer, vec![]);
+        t.buffer = vec![PopI].into();
+        assert_eq!(t.take(), vec![PopI].into());
+        assert_eq!(t.buffer, vec![].into());
     }
 }

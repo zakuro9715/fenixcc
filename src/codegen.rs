@@ -22,7 +22,7 @@ pub mod x86_64 {
     }
 
     pub fn compile(ir: &IR) -> String {
-        let body = ir
+        let body = ir.instructions
             .iter()
             .fold(String::new(), |s, inst| s + &compile_instruction(&inst));
         format!("\
