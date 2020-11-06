@@ -17,11 +17,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Get robo
-      run: bash scripts/get_robo.bash && sudo mv robo /usr/local/bin/
+    - uses: actions/setup-go@v2
+    - name: Install z
+      run: sudo curl -sSL gobinaries.com/zakuro9715/z | sh
     - name: Build
-      run: robo build --verbose
+      run: z build
     - name: Lint
-      run: robo lint
+      run: z lint
     - name: Test
-      run: robo test  --verbose
+      run: z test

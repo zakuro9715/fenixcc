@@ -1,0 +1,38 @@
+tasks:
+  setup:
+    run:
+      - rustup component add rustfmt
+      - rustup component add clippy
+
+  build:
+    run:
+      - cargo build
+
+  run:
+    run:
+      - cargo run
+
+  compile:
+    dsec: Compile example
+    run:
+      - sh scripts/compile-example.sh
+
+  lint:
+    run:
+      - cargo clippy
+    tasks:
+      fix:
+        run:
+          - rustup run nightly cargo clippy --fix -Z unstable-options
+
+  test:
+    run:
+      - z test cargo
+      - z test shell
+    tasks:
+      cargo:
+        run:
+          - cargo test
+      shell:
+        run:
+          - ./shell-tests/run

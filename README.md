@@ -5,7 +5,7 @@ Toy C compiler
 ## Requirements
 
 - Rust
-- [robo](https://github.com/tj/robo)
+- [z](https://github.com/zakuro9715/z)
 
 ## Getting Started
 
