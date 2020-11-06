@@ -151,20 +151,26 @@ impl AST {
     }
 }
 
-#[test]
-#[should_panic]
-fn test_new_literal_invalid() {
-    AST::new_literal(Token::new(TokenKind::EOF, Loc::head()));
-}
 
-#[test]
-#[should_panic]
-fn test_new_binary_expr_invalid() {
-    AST::new_binary_expr(
-        ast_zero_literal!(),
-        tok!(new_int, 0, Loc::head()),
-        ast_zero_literal!(),
-    );
+#[cfg(test)]
+mod tests {
+    use crate::{AST, Token, TokenKind, Loc, tok, ast_zero_literal};
+
+    #[test]
+    #[should_panic]
+    fn test_new_literal_invalid() {
+        AST::new_literal(Token::new(TokenKind::EOF, Loc::head()));
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_new_binary_expr_invalid() {
+        AST::new_binary_expr(
+            ast_zero_literal!(),
+            tok!(new_int, 0, Loc::head()),
+            ast_zero_literal!(),
+        );
+    }
 }
 
 
