@@ -1,5 +1,6 @@
 use crate::{IR, Visitor, AST};
 use crate::Instruction::*;
+use crate::nodes::*;
 
 impl From<AST> for IR {
     fn from(ast: AST) -> IR {
@@ -33,8 +34,8 @@ impl Visitor<(), ()> for IRTranslator {
         self.buffer.push(PopI);
         Ok(())
     }
-    fn visit_int_literal(&mut self, i: i64) -> Result<(), ()> {
-        self.buffer.push(PushI(i));
+    fn visit_int_literal(&mut self, i: &IntLiteral) -> Result<(), ()> {
+        self.buffer.push(PushI(i.value));
         Ok(())
     }
     fn visit_addition(&mut self, _: (), _: ()) -> Result<(), ()>{
