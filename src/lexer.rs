@@ -33,6 +33,15 @@ impl<'a> Lexer<'a> {
     }
 }
 
+
+fn is_ident_first_char(c :char) -> bool {
+    c.is_ascii_alphabetic() || c == '_'
+}
+
+fn is_ident_char(c :char) -> bool {
+    is_ident_first_char(c) || c.is_ascii_digit()
+}
+
 impl<'a> Lexer<'a> {
     fn read_while<F: Fn(char) -> bool>(&mut self, f: F) -> String {
         let start_loc = self.loc;
@@ -52,6 +61,13 @@ impl<'a> Lexer<'a> {
             .parse::<i64>()
             .unwrap();
         Token::new(TokenKind::Int(int), loc)
+    }
+
+    fn read_ident(&mut self) -> Token {
+        let loc = self.loc;
+        let first = self.peek_char();
+        self.consume();
+        tok!(new_ident, first.to_string() + &self.read_while(is_ident_char), loc)
     }
 
     fn consume(&mut self) {
@@ -117,6 +133,7 @@ impl<'a> Iterator for Lexer<'a> {
             '-' => read_sym1!(Minus),
             ';' => read_sym1!(Semicolon),
             '=' => read_sym1!(Equal),
+            c if is_ident_first_char(c) => self.read_ident(),
             c if c.is_ascii_digit() => self.read_integer(),
             c => self.consume_and(tok!(new_invalid_char, c, loc)),
         })
@@ -125,7 +142,7 @@ impl<'a> Iterator for Lexer<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{tok, sym, Source, Lexer, Symbol, Token, Loc};
+    use crate::{tok, head_tok, sym, Source, Lexer, Symbol, Token, Loc};
 
     fn test_lex(code :&str, expected :Vec<Token>) {
         let s = Source::new("", code);
@@ -169,5 +186,12 @@ mod tests {
             tok!(new_int, 0, Loc::new(9, 6, 1)),
             tok!(new_eof, Loc::new(10, 6, 2)),
         ])
+    }
+
+    #[test]
+    fn test_ident() {
+        test_lex("_abc", vec![
+            head_tok!(new_ident, "_abc"),
+       ])
     }
 }

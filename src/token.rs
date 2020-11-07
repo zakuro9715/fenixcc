@@ -55,6 +55,7 @@ pub enum TokenKind {
     Error(TokenError),
     Symbol(Symbol),
     Keyword(Keyword),
+    Ident(String),
     Int(i64),
     EOF,
 }
@@ -94,6 +95,10 @@ impl Token {
 
     pub fn new_int(v: i64, loc: Loc) -> Self {
         Self::new(TokenKind::Int(v), loc)
+    }
+
+    pub fn new_ident(s: impl Into<String>, loc: Loc) -> Self {
+        Self::new(TokenKind::Ident(s.into()), loc)
     }
 
     pub fn new_error(err: TokenError, loc: Loc) -> Self {
