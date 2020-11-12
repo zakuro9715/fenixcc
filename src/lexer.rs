@@ -131,6 +131,8 @@ impl<'a> Iterator for Lexer<'a> {
         Some(match self.peek_char() {
             '+' => read_sym1!(Plus),
             '-' => read_sym1!(Minus),
+            '*' => read_sym1!(Asterisk),
+            '/' => read_sym1!(Slash),
             ';' => read_sym1!(Semicolon),
             '=' => read_sym1!(Equal),
             c if is_ident_first_char(c) => self.read_ident(),
@@ -168,12 +170,14 @@ mod tests {
 
     #[test]
     fn test_symbols() {
-        test_lex("+-;=", vec![
+        test_lex("+-*/;=", vec![
             tok!(new, sym!(Plus), Loc::new(0, 1, 1)),
             tok!(new, sym!(Minus), Loc::new(1, 1, 2)),
-            tok!(new, sym!(Semicolon), Loc::new(2, 1, 3)),
-            tok!(new, sym!(Equal), Loc::new(3, 1, 4)),
-            tok!(new_eof, Loc::new(4, 1, 5)),
+            tok!(new, sym!(Asterisk), Loc::new(2, 1, 3)),
+            tok!(new, sym!(Slash), Loc::new(3, 1, 4)),
+            tok!(new, sym!(Semicolon), Loc::new(4, 1, 5)),
+            tok!(new, sym!(Equal), Loc::new(5, 1, 6)),
+            tok!(new_eof, Loc::new(6, 1, 7)),
         ])
     }
 

@@ -56,14 +56,29 @@ impl<Tokens: Iterator<Item = Token>> Parser<Tokens> {
     }
 
     fn parse_expr(&mut self) -> Result<AST> {
-        let mut ast = self.parse_value()?;
+        self.parse_add_sub()
+    }
+
+    fn parse_add_sub(&mut self) -> Result<AST> {
+        let mut ast = self.parse_mul_div()?;
         while matches!(self.peek_token().kind, sym!(Plus) | sym!(Minus)) {
+            let op = self.read_symbol()?;
+            let rhs = self.parse_mul_div()?;
+            ast = ast!(new_binary_expr, ast, op, rhs);
+        }
+        Ok(ast)
+    }
+
+    fn parse_mul_div(&mut self) -> Result<AST> {
+        let mut ast = self.parse_value()?;
+        while matches!(self.peek_token().kind, sym!(Asterisk) | sym!(Slash)) {
             let op = self.read_symbol()?;
             let rhs = self.parse_value()?;
             ast = ast!(new_binary_expr, ast, op, rhs);
         }
         Ok(ast)
     }
+
 
     fn read_token_with_match<F: Fn(&Token) -> bool>(&mut self, matches: F) -> Result<Token> {
         let tok = self.next_token();
@@ -97,26 +112,22 @@ mod tests {
             tok!(new_int, 0, Loc::new(0, 1, 1)),
             tok!(new, sym!(Plus), Loc::new(1, 1, 2)),
             tok!(new_int, 0, Loc::new(2, 1, 3)),
-            tok!(new, sym!(Minus), Loc::new(3, 1, 4)),
+            tok!(new, sym!(Asterisk), Loc::new(3, 1, 4)),
             tok!(new_int, 0, Loc::new(4, 1, 5)),
             tok!(new_eof, Loc::new(4, 1, 6)),
         ];
         let v = Parser::new(tokens.clone().into_iter()).parse_expr().unwrap();
-        assert_eq!(
-            format!("{:?}", v),
-            format!(
-                "{:?}",
+        assert_eq!(v,
+            ast!(
+                new_binary_expr,
+                ast!(new_literal, tokens[0].clone()),
+                tokens[1].clone(),
                 ast!(
                     new_binary_expr,
-                    ast!(
-                        new_binary_expr,
-                        ast!(new_literal, tokens[0].clone()),
-                        tokens[1].clone(),
-                        ast!(new_literal, tokens[2].clone()),
-                    ),
+                    ast!(new_literal, tokens[2].clone()),
                     tokens[3].clone(),
                     ast!(new_literal, tokens[4].clone()),
-                )
+                ),
             ),
         );
     }

@@ -4,6 +4,8 @@ pub enum Instruction {
     PopI,
     AddI,
     SubI,
+    MulI,
+    DivI,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Default)]

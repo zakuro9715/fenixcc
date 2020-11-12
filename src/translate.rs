@@ -29,6 +29,15 @@ impl IRTranslator {
     }
 }
 
+macro_rules! fn_translate_binary {
+    ($method:ident, $opcode:expr) => {
+        fn $method(&mut self, _: (), _: ()) -> Result<(), ()>{
+            self.buffer.push($opcode);
+            Ok(())
+        }
+    };
+}
+
 impl Visitor<(), ()> for IRTranslator {
     fn visit_expr_statement_right(&mut self, _: ()) -> Result<(), ()> {
         self.buffer.push(PopI);
@@ -38,14 +47,11 @@ impl Visitor<(), ()> for IRTranslator {
         self.buffer.push(PushI(i.value));
         Ok(())
     }
-    fn visit_addition(&mut self, _: (), _: ()) -> Result<(), ()>{
-        self.buffer.push(AddI);
-        Ok(())
-    }
-    fn visit_subtraction(&mut self, _: (), _: ()) -> Result<(), ()> {
-        self.buffer.push(SubI);
-        Ok(())
-    }
+
+    fn_translate_binary!(visit_addition, AddI);
+    fn_translate_binary!(visit_subtraction, SubI);
+    fn_translate_binary!(visit_multiplication, MulI);
+    fn_translate_binary!(visit_division, DivI);
 }
 
 #[cfg(test)]

@@ -32,6 +32,8 @@ fn test_loc_new() {
 pub enum Symbol {
     Plus,
     Minus,
+    Asterisk,
+    Slash,
     Semicolon,
     Equal,
 }

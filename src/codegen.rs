@@ -18,6 +18,8 @@ pub mod x86_64 {
             PopI => "\tpop rax\n".to_string(),
             AddI => compile_binary_operation("add"),
             SubI => compile_binary_operation("sub"),
+            MulI => compile_binary_operation("add"), // TODO
+            DivI => compile_binary_operation("add"), // TODO
         }
     }
 

@@ -25,6 +25,8 @@ define_node!{
     ExprStatement,
     Addition,
     Subtraction,
+    Multiplication,
+    Division,
     IntLiteral,
 }
 
@@ -64,6 +66,8 @@ pub mod nodes {
 
     binary!{Addition}
     binary!{Subtraction}
+    binary!{Division}
+    binary!{Multiplication}
 
     value!{IntLiteral, i64}
 
@@ -111,17 +115,21 @@ impl AST {
 
     pub fn new_binary_expr(lhs: AST, op: Token, rhs: AST) -> Self {
         let kind = op.kind.clone();
+        macro_rules! node {
+            ($node:ident) => {
+                Node::$node(nodes::$node{
+                    lhs: Box::new(lhs),
+                    rhs: Box::new(rhs),
+                })
+            };
+        }
         Self::new(
             Some(op),
             match kind {
-                sym!(Plus) => Node::Addition(nodes::Addition{
-                    lhs: Box::new(lhs),
-                    rhs: Box::new(rhs),
-                }),
-                sym!(Minus) => Node::Subtraction(nodes::Subtraction{
-                    lhs: Box::new(lhs),
-                    rhs: Box::new(rhs),
-                }),
+                sym!(Plus) => node!(Addition),
+                sym!(Minus) => node!(Subtraction),
+                sym!(Asterisk) => node!(Multiplication),
+                sym!(Slash) => node!(Division),
                 _ => panic!("Invalid token"),
             },
         )
@@ -176,6 +184,13 @@ mod tests {
 
 pub trait Visitor<R: Default, E> {
     fn visit(&mut self, ast: &AST) -> Result<R, E> {
+        macro_rules! binary {
+            ($method:ident, $v:expr) => {{
+                let l = self.visit(&$v.lhs)?;
+                let r = self.visit(&$v.rhs)?;
+                self.$method(l, r)
+            }};
+        }
         match &ast.node {
             Node::Block(block) => {
                 for v in &block.items {
@@ -189,16 +204,10 @@ pub trait Visitor<R: Default, E> {
                 self.visit_expr_statement_right(v)
             }
             Node::IntLiteral(lit) => self.visit_int_literal(lit),
-            Node::Addition(v) => {
-                let l = self.visit(&v.lhs)?;
-                let r = self.visit(&v.rhs)?;
-                self.visit_addition(l, r)
-            }
-            Node::Subtraction(v) => {
-                let l = self.visit(&v.lhs)?;
-                let r = self.visit(&v.rhs)?;
-                self.visit_subtraction(l, r)
-            }
+            Node::Addition(v) => binary!(visit_addition, v),
+            Node::Subtraction(v) => binary!(visit_subtraction, v),
+            Node::Multiplication(v) => binary!(visit_multiplication, v),
+            Node::Division(v) => binary!(visit_division, v),
         }
     }
     fn visit_expr_statement_left(&mut self) -> Result<R, E> {
@@ -214,6 +223,12 @@ pub trait Visitor<R: Default, E> {
         Ok(Default::default())
     }
     fn visit_subtraction(&mut self, _lhs: R, _rhs: R) -> Result<R, E> {
+        Ok(Default::default())
+    }
+    fn visit_multiplication(&mut self, _lhs: R, _rhs: R) -> Result<R, E> {
+        Ok(Default::default())
+    }
+    fn visit_division(&mut self, _lhs: R, _rhs: R) -> Result<R, E> {
         Ok(Default::default())
     }
 }
